@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { HerramientasModule } from './herramientas/herramientas.module';
+import { CategoriasModule } from './categorias/categorias.module';
 
 @Module({
-  imports: [HerramientasModule],
+  imports: [HerramientasModule, CategoriasModule],
   controllers: [],
   providers: [],
 })
