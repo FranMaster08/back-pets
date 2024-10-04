@@ -8,8 +8,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DogVaccines } from './DogVaccines.entity';
-import { Owners } from './Owners';
-import { Personalities } from './Personalities';
+import { Owners } from './Owners.entity';
+import { Personalities } from './Personalities.entity';
 import { Breeds } from './Breeds.entity';
 
 @Index('owner_id', ['ownerId'], {})

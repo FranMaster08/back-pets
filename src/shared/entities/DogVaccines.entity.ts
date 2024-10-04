@@ -1,6 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Dogs } from './Dogs.entity';
-import { Vaccines } from './Vaccines';
+import { Vaccines } from './Vaccines.entity';
 
 @Index('vaccine_id', ['vaccineId'], {})
 @Entity('DogVaccines', { schema: 'pets' })
