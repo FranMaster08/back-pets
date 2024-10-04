@@ -16,16 +16,14 @@ async function bootstrap() {
 
   // Configuración de Swagger
   const config = new DocumentBuilder()
-    .setTitle('API de Herramientas') // Título del documento Swagger
+    .setTitle('API de Mascotas') // Título del documento Swagger
     .setDescription(
-      'API que permite gestionar y consultar diferentes herramientas.',
+      'API que permite gestionar y consultar información sobre mascotas.',
     ) // Descripción general de la API
     .setVersion('1.0') // Versión de la API
-    .addTag('herramientas', 'Endpoints relacionados con herramientas') // Etiqueta para los endpoints
-    .addTag(
-      'categorias',
-      'Endpoints relacionados con las categorias de herramientas',
-    ) // Etiqueta para los endpoints
+    .addTag('mascotas', 'Endpoints relacionados con mascotas') // Etiqueta para los endpoints relacionados con mascotas
+    .addTag('dueños', 'Endpoints relacionados con los dueños de las mascotas') // Etiqueta para los endpoints relacionados con dueños
+    .addTag('vacunas', 'Endpoints relacionados con las vacunas de las mascotas') // Etiqueta para los endpoints relacionados con vacunas
 
     .addBearerAuth() // Añadir autenticación mediante JWT o tokens Bearer (opcional)
     .build();
@@ -37,8 +35,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Iniciar la aplicación en el puerto 3000
-
-  app.enableCors({origin:'*'})
+  app.enableCors({ origin: '*' });
   await app.listen(3000);
 }
 
