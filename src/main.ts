@@ -37,6 +37,8 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   // Iniciar la aplicación en el puerto 3000
+
+  app.enableCors({origin:'*'})
   await app.listen(3000);
 }
 

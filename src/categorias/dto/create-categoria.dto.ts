@@ -9,4 +9,5 @@ export class CreateCategoriaDto {
   @IsString({ message: 'El nombre debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'El nombre no puede estar vacío.' })
   name: string;
+  // nombre: string | FindOperator<string>;
 }

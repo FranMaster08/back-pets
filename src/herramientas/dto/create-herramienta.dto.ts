@@ -28,9 +28,9 @@ export class CreateHerramientaDto {
 
   @ApiPropertyOptional({
     description: 'Categoría de la herramienta, opcional',
-    example: 'Construcción',
+    example: '2',
   })
-  @IsString({ message: 'La categoría debe ser una cadena de texto.' })
-  @IsOptional()
-  categoria?: string;
+  @IsNumber({}, { message: 'El ID de categoría debe ser un numero' })
+  @IsNotEmpty({ message: 'El nombre no puede estar vacío.' })
+  idcategoria: number;
 }
