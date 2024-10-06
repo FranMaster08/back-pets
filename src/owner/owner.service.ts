@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Owners } from "../shared/entities/Owners.entity";
 
 
+
 @Injectable()
 export class OwnerService {
   private readonly logger = new Logger(OwnerService.name);
@@ -45,17 +46,56 @@ export class OwnerService {
     return savedOwner;
   }
 
-  // Obtener todos los Owner con validación
-  async findAll(): Promise<Owners[]> {
-    this.logger.log('Fetching all Owner'); // Info log
 
-    const Owner = await this.OwnerRepository.find();
-    if (Owner.length === 0) {
-      this.logger.warn('No Owner found'); // Warning log
+  async findAll(filters?: {
+    name?: string;
+    email?: string;
+    address?: string;
+    phone?: string;
+  }) {
+    this.logger.debug(
+      `Iniciando búsqueda de Owners con filtros: ${JSON.stringify(filters)}`,
+    );
+  
+    try {
+      const where: any = {};
+  
+      // Si los filtros existen, agrégalos a la cláusula `where`
+      if (filters?.name) {
+        where.name = filters.name;
+      }
+      if (filters?.email) {
+        where.email = filters.email;  // Ajuste para tratar `email` como un campo normal
+      }
+      if (filters?.address) {
+        where.address = filters.address;  // Ajuste para tratar `address` como un campo normal
+      }
+      if (filters?.phone) {
+        where.phone = filters.phone;
+      }
+  
+      // Ejecutar la consulta
+      const result = await this.OwnerRepository.find({
+        where,
+        relations: [],  // Si no hay relaciones que cargar, puedes dejar esto vacío
+      });
+  
+      this.logger.debug(`Owners encontrados: ${result.length}`);
+      return result;
+    } catch (error) {
+      this.logger.error(
+        `Error en método 'findAll': ${error.message}`,
+        error.stack,
+        {
+          method: 'findAll',
+          class: OwnerService.name,
+        },
+      );
+      throw error;
     }
-
-    return Owner;
   }
+  
+
 
   // Obtener una Owner por ID con validación
   async findOne(id: number): Promise<Owners> {

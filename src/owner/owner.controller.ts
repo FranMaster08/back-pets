@@ -1,14 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
-
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { OwnerService } from './owner.service';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
-import { Owners } from "../shared/entities/Owners.entity";
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { OwnerResponseDto } from './dto/response/owner.response';
 
 
-@ApiTags('Owner') // Etiqueta para agrupar los endpoints en la documentación de Swagger
+@ApiTags('dueños') // Etiqueta para agrupar los endpoints en la documentación de Swagger
 @Controller('Owner')
 export class OwnerController {
   constructor(private readonly OwnerService: OwnerService) {}
@@ -21,12 +19,47 @@ export class OwnerController {
     return this.OwnerService.create(createOwnerDto);
   }
 
+  
   @Get()
-  @ApiOperation({ summary: 'Obtener todos los Owner' })
-  @ApiResponse({ status: 200, description: 'Lista de Owners.', type: [OwnerResponseDto], })
-  findAll(): Promise<Owners[]> {
-    return this.OwnerService.findAll();
+  @ApiOperation({ summary: 'Obtener todos los owners con filtros opcionales' })
+  @ApiQuery({ name: 'name', required: false, description: 'Nombre del owner' })
+  @ApiQuery({ name: 'email', required: false, description: 'email del owner' })
+  @ApiQuery({ name: 'address', required: false, description: 'Address del owner' })
+  @ApiQuery({ name: 'phone', required: false, description: 'Phone del owner' })
+  
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de Owners obtenida exitosamente.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Error interno del servidor.',
+    schema: {
+      example: {
+        statusCode: 500,
+        message: 'Error al consultar los datos',
+        error: 'Internal Server Error',
+      },
+    },
+  })
+
+  async findAll(
+    @Query('name') name?: string,
+    @Query('email') email?: string,
+    @Query('address') address?: string,
+    @Query('phone') phone?: string,
+  ) { 
+    const filters = {};
+  
+    if (name) filters['name'] = name;
+    if (email) filters['email'] = email;
+    if (address) filters['address'] = address;
+    if (phone) filters['phone'] = phone;
+
+    return await this.OwnerService.findAll(filters);
   }
+  
+
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un Owner por ID' })
