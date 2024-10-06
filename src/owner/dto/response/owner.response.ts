@@ -30,6 +30,4 @@ export class OwnerResponseDto {
     example: '3023525803',
   })
   phone: string;
-
-
 }

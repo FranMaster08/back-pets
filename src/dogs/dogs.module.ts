@@ -7,7 +7,6 @@ import { Dogs } from 'src/shared/entities/Dogs.entity';
 import { Owners } from 'src/shared/entities/Owners.entity';
 import { Personalities } from 'src/shared/entities/Personalities.entity';
 
-
 @Module({
   imports: [TypeOrmModule.forFeature([Dogs, Owners, Breeds, Personalities])], // Importa todas las entidades necesarias
   controllers: [DogsController],

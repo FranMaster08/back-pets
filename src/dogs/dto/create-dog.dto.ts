@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsInt, IsOptional, IsNumber, IsUrl, Min, Max, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsOptional,
+  IsNumber,
+  IsUrl,
+  Min,
+  Max,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class CreateDogDto {
   @ApiProperty({
@@ -25,7 +34,7 @@ export class CreateDogDto {
   })
   @IsString()
   @IsNotEmpty({ message: 'El peso es obligatorio.' })
-  weight: string;  // Ajustado a 'string' para que coincida con la entidad
+  weight: string; // Ajustado a 'string' para que coincida con la entidad
 
   @ApiProperty({
     description: 'Altura del perro en centímetros (como cadena de texto)',
@@ -33,7 +42,7 @@ export class CreateDogDto {
   })
   @IsString()
   @IsNotEmpty({ message: 'La altura es obligatoria.' })
-  height: string;  // Ajustado a 'string' para que coincida con la entidad
+  height: string; // Ajustado a 'string' para que coincida con la entidad
 
   @ApiProperty({
     description: 'Color del pelaje del perro',

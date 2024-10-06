@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { UpdateDogDto } from './dto/update-dog.dto';
 import { Breeds } from 'src/shared/entities/Breeds.entity';
@@ -99,7 +99,7 @@ export class DogsService {
       const where: any = {};
 
       if (filters?.name) {
-        where.name = filters.name;
+        where.name = Like(`%${filters.name}%`);
       }
       if (filters?.breedId) {
         where.breed = { id: filters.breedId };

@@ -1,20 +1,23 @@
-import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { UpdateOwnerDto } from './dto/update-owner.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Owners } from "../shared/entities/Owners.entity";
-
+import { Like, Repository } from 'typeorm';
+import { Owners } from '../shared/entities/Owners.entity';
 
 @Injectable()
 export class OwnerService {
   private readonly logger = new Logger(OwnerService.name);
- 
 
   constructor(
     @InjectRepository(Owners)
     private readonly OwnerRepository: Repository<Owners>,
-
   ) {}
 
   // Crear un nuevo Owner con validación
@@ -31,30 +34,63 @@ export class OwnerService {
       throw new ConflictException('Error: el nombre de este Owner ya existe');
     }
 
-
     // Crear y guardar el nuevo Owner
     const newOwner = this.OwnerRepository.create({
-      name : createOwnerDto.name,
+      name: createOwnerDto.name,
       email: createOwnerDto.email,
       address: createOwnerDto.address,
       phone: createOwnerDto.phone,
-
     });
     const savedOwner = await this.OwnerRepository.save(newOwner);
     this.logger.log('Owner creado con exito');
     return savedOwner;
   }
 
-  // Obtener todos los Owner con validación
-  async findAll(): Promise<Owners[]> {
-    this.logger.log('Fetching all Owner'); // Info log
+  async findAll(filters?: {
+    name?: string;
+    email?: string;
+    address?: string;
+    phone?: string;
+  }) {
+    this.logger.debug(
+      `Iniciando búsqueda de Owners con filtros: ${JSON.stringify(filters)}`,
+    );
 
-    const Owner = await this.OwnerRepository.find();
-    if (Owner.length === 0) {
-      this.logger.warn('No Owner found'); // Warning log
+    try {
+      const where: any = {};
+
+      if (filters?.name) {
+        where.name = Like(`%${filters.name}%`);
+      }
+      if (filters?.email) {
+        where.email = Like(`%${filters.email}%`);
+      }
+      if (filters?.address) {
+        where.address = Like(`%${filters.address}%`);
+      }
+      if (filters?.phone) {
+        where.phone = Like(`%${filters.phone}%`);
+      }
+
+      // Ejecutar la consulta
+      const result = await this.OwnerRepository.find({
+        where,
+        relations: [], // Si no hay relaciones que cargar, puedes dejar esto vacío
+      });
+
+      this.logger.debug(`Owners encontrados: ${result.length}`);
+      return result;
+    } catch (error) {
+      this.logger.error(
+        `Error en método 'findAll': ${error.message}`,
+        error.stack,
+        {
+          method: 'findAll',
+          class: OwnerService.name,
+        },
+      );
+      throw error;
     }
-
-    return Owner;
   }
 
   // Obtener una Owner por ID con validación
@@ -88,7 +124,7 @@ export class OwnerService {
     }
 
     // Actualizar y guardar el Owner
-    this.OwnerRepository.merge(Owner, {name : updateOwnerDto.name});
+    this.OwnerRepository.merge(Owner, { name: updateOwnerDto.name });
     const updatedOwner = await this.OwnerRepository.save(Owner);
     this.logger.log(`Owner con ID: ${id} actualizada exitosamente`);
     return updatedOwner;
@@ -105,4 +141,3 @@ export class OwnerService {
     this.logger.log(`Owner con ID: ${id} deleted successfully`);
   }
 }
-
