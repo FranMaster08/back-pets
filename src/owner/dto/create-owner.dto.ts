@@ -1,4 +1,3 @@
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
@@ -41,5 +40,4 @@ export class CreateOwnerDto {
   @IsString({ message: 'El Phone debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'El Phone no puede estar vacío.' })
   phone: string;
-
 }
