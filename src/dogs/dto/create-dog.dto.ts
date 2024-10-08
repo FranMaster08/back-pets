@@ -83,4 +83,30 @@ export class CreateDogDto {
   @IsInt()
   @IsNotEmpty({ message: 'El ID de la raza es obligatorio.' })
   breed_id: number;
+
+  @ApiProperty({
+    description: 'ID de la vacuna del perro',
+    example: 3,
+  })
+  @IsInt()
+  @IsOptional({ message: 'El ID de la vacuna es opcional.' })
+  vaccineid: number;
+}
+
+export class VaccineDogDto {
+  @ApiProperty({
+    name: 'idDog',
+    example: '1',
+    description: 'id del perro',
+  })
+  @IsNumber()
+  idDog: number;
+
+  @ApiProperty({
+    name: 'idVaccine',
+    example: '1',
+    description: 'id de la vacuna',
+  })
+  @IsNumber()
+  idVaccine: number;
 }

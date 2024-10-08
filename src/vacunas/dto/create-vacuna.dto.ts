@@ -24,5 +24,4 @@ export class CreatevacunasDto {
   @IsString({ message: 'La descripcion debe ser una cadena de texto.' })
   @IsNotEmpty({ message: 'La descripcion no puede estar vacía.' })
   description: string;
-
 }

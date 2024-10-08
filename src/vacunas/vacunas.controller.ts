@@ -33,8 +33,16 @@ export class vacunasController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener todas las vacunas con filtros opcionales' })
-  @ApiQuery({ name: 'name', required: false, description: 'Nombre de la vacuna' })
-  @ApiQuery({ name: 'description', required: false, description: 'Description de la vacuna' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Nombre de la vacuna',
+  })
+  @ApiQuery({
+    name: 'description',
+    required: false,
+    description: 'Description de la vacuna',
+  })
   @ApiResponse({
     status: 200,
     description: 'Lista de vacunas obtenida exitosamente.',

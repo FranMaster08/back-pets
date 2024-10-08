@@ -1,12 +1,14 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { CreateDogDto } from './dto/create-dog.dto';
+import { CreateDogDto, VaccineDogDto } from './dto/create-dog.dto';
 import { UpdateDogDto } from './dto/update-dog.dto';
 import { Breeds } from 'src/shared/entities/Breeds.entity';
 import { Dogs } from 'src/shared/entities/Dogs.entity';
 import { Owners } from 'src/shared/entities/Owners.entity';
 import { Personalities } from 'src/shared/entities/Personalities.entity';
+import { Vaccines } from 'src/shared/entities/Vaccines.entity';
+import { DogVaccines } from 'src/shared/entities/DogVaccines.entity';
 
 @Injectable()
 export class DogsService {
@@ -21,6 +23,10 @@ export class DogsService {
     private breedsRepository: Repository<Breeds>,
     @InjectRepository(Personalities)
     private personalitiesRepository: Repository<Personalities>,
+    @InjectRepository(Vaccines)
+    private vacunasRepository: Repository<Personalities>,
+    @InjectRepository(DogVaccines)
+    private dogVacineRepository: Repository<DogVaccines>,
   ) {}
 
   // Método para crear un perro
@@ -29,7 +35,7 @@ export class DogsService {
       `Iniciando creación de un perro con datos: ${JSON.stringify(createDogDto)}`,
     );
 
-    const { owner_id, breed_id, personality_id } = createDogDto;
+    const { owner_id, breed_id, personality_id, vaccineid } = createDogDto;
     try {
       const owner = await this.ownersRepository.findOne({
         where: { id: owner_id },
@@ -59,6 +65,16 @@ export class DogsService {
         );
       }
 
+      const vacunas = await this.vacunasRepository.findOne({
+        where: { id: vaccineid },
+      });
+      if (!personality) {
+        this.logger.warn(`Personalidad con ID ${vaccineid} no encontrada.`);
+        throw new NotFoundException(
+          `Personality with ID ${vaccineid} not found`,
+        );
+      }
+
       const newDog = this.dogsRepository.create({
         ...createDogDto,
         owner,
@@ -67,6 +83,14 @@ export class DogsService {
       });
 
       const result = await this.dogsRepository.save(newDog);
+
+      const vaccineDog = await this.dogVacineRepository.create({
+        dogId: result.id,
+        vaccineId: vaccineid,
+      });
+
+      await this.dogVacineRepository.save(vaccineDog);
+
       this.logger.debug(`Perro creado exitosamente: ${JSON.stringify(result)}`);
       return result;
     } catch (error) {
@@ -257,6 +281,55 @@ export class DogsService {
         {
           method: 'remove',
           params: { id },
+          class: DogsService.name,
+        },
+      );
+      throw error;
+    }
+  }
+
+  async vaccine(createDogDto: VaccineDogDto) {
+    this.logger.debug(
+      `Iniciando vacunacion de un perro con datos: ${JSON.stringify(createDogDto)}`,
+    );
+
+    const { idDog, idVaccine } = createDogDto;
+    try {
+      const dog = await this.dogsRepository.findOne({
+        where: { id: idDog },
+      });
+      if (!dog) {
+        this.logger.warn(`Dueño con ID ${idDog} no encontrado.`);
+        throw new NotFoundException(`Owner with ID ${idDog} not found`);
+      }
+      const vacunas = await this.vacunasRepository.findOne({
+        where: { id: idVaccine },
+      });
+      if (!vacunas) {
+        this.logger.warn(`Personalidad con ID ${idVaccine} no encontrada.`);
+        throw new NotFoundException(
+          `Personality with ID ${idVaccine} not found`,
+        );
+      }
+
+      const vaccineDog = await this.dogVacineRepository.create({
+        dogId: idDog,
+        vaccineId: idVaccine,
+      });
+
+      await this.dogVacineRepository.save(vaccineDog);
+
+      this.logger.debug(
+        `Perro creado exitosamente: ${JSON.stringify(vaccineDog)}`,
+      );
+      return vaccineDog;
+    } catch (error) {
+      this.logger.error(
+        `Error en método 'create': ${error.message}`,
+        error.stack,
+        {
+          method: 'create',
+          params: createDogDto,
           class: DogsService.name,
         },
       );

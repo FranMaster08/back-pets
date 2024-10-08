@@ -44,10 +44,7 @@ export class vacunasService {
     return savedvacunas;
   }
 
-  async findAll(filters?: {
-    name?: string;
-    description?: string;
-  }) {
+  async findAll(filters?: { name?: string; description?: string }) {
     this.logger.debug(
       `Iniciando búsqueda de vacunas con filtros: ${JSON.stringify(filters)}`,
     );
@@ -97,7 +94,10 @@ export class vacunasService {
   }
 
   // Actualizar una vacuna con validación
-  async update(id: number, updatevacunasDto: UpdatevacunasDto): Promise<Vaccines> {
+  async update(
+    id: number,
+    updatevacunasDto: UpdatevacunasDto,
+  ): Promise<Vaccines> {
     this.logger.log(`Actualizando vacuna con ID: ${id}`); // Info log
 
     // Validación: Verificar si la vacuna existe
@@ -110,7 +110,9 @@ export class vacunasService {
 
     if (vacunasConMismoNombre && vacunasConMismoNombre.id !== id) {
       this.logger.warn('La vacuna con ese nombre ya existe'); // Warning log
-      throw new BadRequestException('Ya existe una vacuna con ese mismo nombre');
+      throw new BadRequestException(
+        'Ya existe una vacuna con ese mismo nombre',
+      );
     }
 
     // Actualizar y guardar una vacuna

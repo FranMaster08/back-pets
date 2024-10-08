@@ -18,5 +18,4 @@ export class vacunasResponseDto {
     example: 'vacuna para el covid',
   })
   description: string;
-
 }

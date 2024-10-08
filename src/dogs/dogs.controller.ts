@@ -11,7 +11,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { DogsService } from './dogs.service';
-import { CreateDogDto } from './dto/create-dog.dto';
+import { CreateDogDto, VaccineDogDto } from './dto/create-dog.dto';
 import { UpdateDogDto } from './dto/update-dog.dto';
 import {
   ApiTags,
@@ -25,6 +25,27 @@ import {
 @Controller('dogs')
 export class DogsController {
   constructor(private readonly dogsService: DogsService) {}
+
+  @Post('vaccine-dog')
+  @ApiOperation({ summary: 'Vacunar un nuevo perro' })
+  @ApiResponse({
+    status: 201,
+    description: 'El perro ha sido vacunado exitosamente.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Error de validación. Faltan campos obligatorios.',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: 'Validation failed: El campo nombre es obligatorio',
+        error: 'Bad Request',
+      },
+    },
+  })
+  async vaccine(@Body() vaccineDto: VaccineDogDto) {
+    return await this.dogsService.vaccine(vaccineDto);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo perro' })
@@ -67,6 +88,12 @@ export class DogsController {
     name: 'personalityId',
     required: false,
     description: 'ID de la personalidad del perro',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'vaccineId',
+    required: false,
+    description: 'ID de la vacuna del perro',
     type: Number,
   })
   @ApiResponse({

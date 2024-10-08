@@ -11,4 +11,3 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
   providers: [vacunasService],
 })
 export class VacunasModule {}
-
